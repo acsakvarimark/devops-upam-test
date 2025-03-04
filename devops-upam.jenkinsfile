@@ -6,6 +6,18 @@ pipeline {
         booleanParam(name: 'OS_UPDATE', defaultValue: true, description: 'Check to enable OS update on node')
     }
     stages {
+		stage('Fetch Repository') {
+				steps {
+					script {
+						// Define default ws
+						def workspaceDir = '/home/jenkins/devops-upam-test'
+
+						sh '''
+							git clone https://github.com/acsakvarimark/devops-upam-test.git
+						'''
+					}
+				}
+			}
         stage('Run User Creation Playbook') {
             steps {
                 script {
@@ -28,4 +40,11 @@ pipeline {
             }
         }
     }
+	post {
+        always {
+            // cleanup
+            sh '/home/jenkins/devops-upam-test'
+        }
+    }
+}
 }
