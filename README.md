@@ -95,6 +95,19 @@ The following contains the documentation and the steps taken in order to complet
 - Created Jenkins job named "upam-test-pipeline"
 - Added two environmental variables for optional OS update and secondary user's username
 
+### Pipeline Configuration
+
+- Created pipeline and linked repository and Jenkinsfile
+- Added parameters to choose which node the job runs on, what the generated username will be and if the user want the operating system to update
+
+#### Stages
+
+1. Git repository pull 
+2. Generation of new User
+3. OS update (Optional)
+4. Setup of used tools 
+5.
+
 
 ## GitLab Setup
 

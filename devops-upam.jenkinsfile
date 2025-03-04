@@ -17,13 +17,13 @@ pipeline {
 						
 						sh """
 						if [ -d "devops-upam-test/.git" ]; then
-							cd devops-upam-test
+							cd devops-upam-test && git pull
 							git reset --hard
 							git clean -fd
 							git pull
 						else
 							rm -rf devops-upam-test
-							git clone git@github.com:acsakvarimark/devops-upam-test.git
+							git clone https://github.com/acsakvarimark/devops-upam-test.git
 						fi
 						"""
 					}
