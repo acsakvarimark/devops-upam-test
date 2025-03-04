@@ -1,7 +1,9 @@
 pipeline {
-    agent { label 'k8-master' }
+    agent label params.TARGET_NODE 
     
-    parameters {
+    
+	parameters {
+		choice(name: 'target_node', choices: ['k8-master', 'k8-worker'], description: 'Jenkins node the pipeline runs on')
         string(name: 'new_username', defaultValue: 'pipelineuser', description: 'Username to create inside node')
         booleanParam(name: 'os_update', defaultValue: true, description: 'Check to enable OS update on node')
     }
