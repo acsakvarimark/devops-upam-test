@@ -77,11 +77,12 @@ The following contains the documentation and the steps taken in order to complet
 
 ### SSH Key Configuration
 
-1. Generated SSH keys for devops-k8master-vm and devops-k8worker-vm
-2. Copied keys to respective VMs
-3. Set up credentials in Jenkins for SSH connection
-4. Manually created known_hosts file under /var/lib/jenkins/.ssh/known_hosts
-5. Scanned and copied generated SSH keys with main VM's IP address to known_hosts file
+1. Added jenkins as user to both nodes as well as gave them root and no password required priviledges
+2. Generated SSH keys for devops-k8master-vm and devops-k8worker-vm
+3. Copied keys to respective VMs
+4. Set up credentials in Jenkins for SSH connection
+5. Manually created known_hosts file under /var/lib/jenkins/.ssh/known_hosts
+6. Scanned and copied generated SSH keys with main VM's IP address to known_hosts file
 
 ### Workspace Configuration
 
@@ -103,10 +104,12 @@ The following contains the documentation and the steps taken in order to complet
 #### Stages
 
 1. Git repository pull 
-2. Generation of new User
-3. OS update (Optional)
-4. Setup of used tools 
-5.
+2. Setup of used tools 
+3. Generation of new User
+4. OS update (Optional)
+5. Setup K8s
+6. Setup portainer
+7. Setup ingress
 
 
 ## GitLab Setup
