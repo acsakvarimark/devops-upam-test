@@ -1,0 +1,13 @@
+---
+- name: User generation
+  hosts: all
+  become: true
+  vars:
+    new_user: "{{ NEW_USER | default('pipelineuser') }}"
+
+  tasks:
+    - name: Generate user
+      ansible.builtin.user:
+        name: "{{ new_user }}"
+        shell: /bin/bash
+        create_home: yes

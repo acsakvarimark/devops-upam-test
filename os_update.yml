@@ -1,0 +1,18 @@
+---
+- name: OS Update
+  hosts: all
+  become: true
+  vars:
+    os_update: "{{ OS_UPDATE | default(true) }}"
+
+  tasks:
+    - name: Os Update
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+      when: os_update | bool
+
+    - name: Skip
+      ansible.builtin.debug:
+        msg: "Skipped OS update"
+      when: not os_update | bool
