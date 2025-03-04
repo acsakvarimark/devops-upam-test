@@ -11,10 +11,15 @@ pipeline {
 					script {
 						// Define default ws
 						def workspaceDir = '/home/jenkins/devops-upam-test'
-
-						sh '''
+						
+						sh """
+						if [ -d "devops-upam-test/.git" ]; then
+							cd devops-upam-test && git pull
+						else
+							rm -rf devops-upam-test
 							git clone https://github.com/acsakvarimark/devops-upam-test.git
-						'''
+						fi
+						"""
 					}
 				}
 			}
