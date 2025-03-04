@@ -2,8 +2,8 @@ pipeline {
     agent { label 'k8-master' }
     
     parameters {
-        string(name: 'NEW_USER', defaultValue: 'pipelineuser', description: 'Username to create inside node')
-        booleanParam(name: 'OS_UPDATE', defaultValue: true, description: 'Check to enable OS update on node')
+        string(name: 'new_username', defaultValue: 'pipelineuser', description: 'Username to create inside node')
+        booleanParam(name: 'os_update', defaultValue: true, description: 'Check to enable OS update on node')
     }
     stages {
 		stage('Fetch Repository') {
@@ -46,5 +46,4 @@ pipeline {
             sh '/home/jenkins/devops-upam-test'
         }
     }
-}
 }
