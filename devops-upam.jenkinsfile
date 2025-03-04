@@ -29,6 +29,15 @@ pipeline {
 					}
 				}
 			}
+		stage('Setup tools') {
+            steps {
+                script {
+                    sh """
+                    sudo -u ${params.NEW_USER} bash ${WORKSPACE_DIR}/docker_setup.sh
+                    """
+				}
+			}
+		}
         stage('Run User Creation Playbook') {
             steps {
                 script {
@@ -50,15 +59,7 @@ pipeline {
                 }
             }
         }
-		stage('Setup tools') {
-            steps {
-                script {
-                    sh """
-                    sudo -u ${params.NEW_USER} bash ${WORKSPACE_DIR}/docker_setup.sh
-                    """
-				}
-			}
-		}
+		
     }
 	post {
         always {
