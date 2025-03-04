@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'NEW_USER', defaultValue: 'pipelineuser', description: 'Enter the username to create')
+        booleanParam(name: 'OS_UPDATE', defaultValue: true, description: 'Check to enable OS update')
+    }
+    stages {
+		stage('Hello w'){
+			echo 'herewegoo'
+		}
+    }
+}
