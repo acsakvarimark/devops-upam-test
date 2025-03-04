@@ -45,6 +45,7 @@ pipeline {
 		stage('Run User Creation Playbook') {
 			steps {
 				script {
+					sh """pwd"""
 					sh """
 					ansible-playbook -i inventory.ini user_creation.yml \
 					-e NEW_USER=${params.NEW_USER}
@@ -56,6 +57,7 @@ pipeline {
 			steps {
 				script {
 					def osUpdateFlag = params.OS_UPDATE ? "true" : "false"
+					sh """pwd"""
 					sh """
 					ansible-playbook -i inventory.ini os_update.yml \
 					-e OS_UPDATE=${osUpdateFlag}

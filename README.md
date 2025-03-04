@@ -67,22 +67,22 @@ The following contains the documentation and the steps taken in order to complet
 
 ### Installation and Configuration
 
-1. Downloaded and installed Jenkins as a service on devops-main-vm
-2. Added Jenkins service to systemctl configuration (enabled on startup)
-3. Jenkins accessible at http://localhost:8080
-4. Created admin user account:
+- Downloaded and installed Jenkins as a service on devops-main-vm
+- Added Jenkins service to systemctl configuration (enabled on startup)
+- Jenkins accessible at http://localhost:8080
+- Created admin user account:
     - Username: admin
     - Password: admin
-5. Installed recommended Jenkins packages
+- Installed recommended Jenkins packages
 
 ### SSH Key Configuration
 
-1. Added jenkins as user to both nodes as well as gave them root and no password required priviledges
-2. Generated SSH keys for devops-k8master-vm and devops-k8worker-vm
-3. Copied keys to respective VMs
-4. Set up credentials in Jenkins for SSH connection
-5. Manually created known_hosts file under /var/lib/jenkins/.ssh/known_hosts
-6. Scanned and copied generated SSH keys with main VM's IP address to known_hosts file
+- Added jenkins as user to both nodes as well as gave them root and no password required priviledges
+- Generated SSH keys for devops-k8master-vm and devops-k8worker-vm
+- Copied keys to respective VMs
+- Set up credentials in Jenkins for SSH connection
+- Manually created known_hosts file under /var/lib/jenkins/.ssh/known_hosts
+- Scanned and copied generated SSH keys with main VM's IP address to known_hosts file
 
 ### Workspace Configuration
 
@@ -114,10 +114,13 @@ The following contains the documentation and the steps taken in order to complet
 
 ## GitLab Setup
 
-### Docker Installation
+### Docker Installation & Configuration
 
-1. Added GPG key for Docker and Docker Compose
-2. Downloaded Docker and Docker Compose using the GPG key
+- Added GPG key for Docker and Docker Compose
+- Downloaded Docker and Docker Compose using the GPG key
+- Added docker group to both users 
+- Enabled Docker to run on startup
+
 
 ### GitLab Instance Creation
 
@@ -125,18 +128,13 @@ The following contains the documentation and the steps taken in order to complet
 - Generates basic GitLab instance at http://localhost:8081
 
 
-### Docker Configuration
-
-- Added docker group to both users
-- Enabled Docker to run on startup
-
-
 ## Notes and Challenges
 
-1. **Vagrant SSH Issue**: Unable to generate private and public key pair due to Vagrant overwriting it on each startup
-2. **VirtualBox Network Configuration**: Manually added enp0s8 network with DHCP4 enabled in ~/etc/netplan/50-cloud-init.yaml
-3. **Jenkins Docker Installation**: Attempted including Jenkins in docker-compose.yml, but faced user creation and SSH key connection issues
-4. **GitLab Limitations**: Free version doesn't support SSH key connection to repository, opted for GitHub instead for easier SSH key generation and file checkout
+- **Vagrant SSH Issue**: Unable to generate private and public key pair due to Vagrant overwriting it on each startup
+- **VirtualBox Network Configuration**: Manually added enp0s8 network with DHCP4 enabled in ~/etc/netplan/50-cloud-init.yaml
+- **Jenkins Docker Installation**: Attempted including Jenkins in docker-compose.yml, but faced user creation and SSH key connection issues
+- **GitLab Limitations**: Free version doesn't support SSH key connection to repository, opted for GitHub instead for easier SSH key generation and file checkout
+- **Linux OS**: Due to this being my first real Linux OS experience with only using the CLI, I faced challenges understanding commands and the way different user priviledges work
 
 <div style="text-align: center">⁂</div>
 
