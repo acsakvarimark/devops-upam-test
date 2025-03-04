@@ -5,5 +5,5 @@ sudo apt-get install -y docker.io
 sudo systemctl enable --now docker
 
 echo "Pulling ansible"
-sudo docker pull ansible/ansible:ubuntu
-sudo docker run --rm -i -t ansible/ansible:ubuntu ansible --version
+sudo docker pull ansible/ansible:ubuntu1404
+sudo docker run --rm -i -t ansible/ansible:ubuntu1404 ansible --version
