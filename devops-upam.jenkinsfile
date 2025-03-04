@@ -3,10 +3,6 @@ pipeline {
         label params.TARGET_NODE 
     } 
 	
-	option {
-		timestamps()
-	}
-		
 	parameters {
 		choice(name: 'target_node', choices: ['k8-master', 'k8-worker'], description: 'Jenkins node the pipeline runs on')
         string(name: 'new_username', defaultValue: 'pipelineuser', description: 'Username to create inside node')
@@ -16,13 +12,12 @@ pipeline {
     environment {
         WORKSPACE_DIR = '/home/jenkins/workspace/upam-test-pipeline/'
     }
-    
-    stages {
-		stage('Fetch Repository') {
+	
+    timestamps {
+		stages {
+			stage('Fetch Repository') {
 				steps {
 					script {
-						// Define default ws
-
 						sh """
 						if [ -d "devops-upam-test/.git" ]; then
 							cd devops-upam-test && git pull
@@ -38,36 +33,37 @@ pipeline {
 					}
 				}
 			}
-		stage('Setup tools') {
-            steps {
-                script {
-                    sh """
-					sudo -u acsakvari -S bash docker_setup.sh
-                    """
+			stage('Setup tools') {
+				steps {
+					script {
+						sh """
+						sudo -u acsakvari -S bash docker_setup.sh
+						"""
+					}
 				}
 			}
+			stage('Run User Creation Playbook') {
+				steps {
+					script {
+						sh """
+						ansible-playbook -i inventory.ini user_creation.yml \
+						-e NEW_USER=${params.NEW_USER}
+						"""
+					}
+				}
+			}
+			stage('Run OS Update Playbook') {
+				steps {
+					script {
+						def osUpdateFlag = params.OS_UPDATE ? "true" : "false"
+						sh """
+						ansible-playbook -i inventory.ini os_update.yml \
+						-e OS_UPDATE=${osUpdateFlag}
+						"""
+					}
+				}
+			}
+			
 		}
-        stage('Run User Creation Playbook') {
-            steps {
-                script {
-                    sh """
-                    ansible-playbook -i inventory.ini user_creation.yml \
-                    -e NEW_USER=${params.NEW_USER}
-                    """
-                }
-            }
-        }
-        stage('Run OS Update Playbook') {
-            steps {
-                script {
-                    def osUpdateFlag = params.OS_UPDATE ? "true" : "false"
-                    sh """
-                    ansible-playbook -i inventory.ini os_update.yml \
-                    -e OS_UPDATE=${osUpdateFlag}
-                    """
-                }
-            }
-        }
-		
-    }
+	}
 }
