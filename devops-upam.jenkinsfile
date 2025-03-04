@@ -1,6 +1,7 @@
 pipeline {
-    agent label params.TARGET_NODE 
-    
+    agent { 
+        label params.TARGET_NODE 
+    } 
     
 	parameters {
 		choice(name: 'target_node', choices: ['k8-master', 'k8-worker'], description: 'Jenkins node the pipeline runs on')
