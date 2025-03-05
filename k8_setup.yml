@@ -4,10 +4,21 @@
   become: true
   tasks:
 
+    - name: Add Kubernetes GPG key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
     - name: Add K8s apt repository
       apt_repository:
         repo: "deb http://apt.kubernetes.io/kubernetes-apt stable main"
         state: present
+        filename: "kubernetes"
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
 
     - name: Install kubelet, kubeadm, kubectl
       apt:
@@ -50,3 +61,4 @@
       shell: |
         kubeadm upgrade apply --yes
       when: ansible_facts['distribution_version'] | version_compare('1.20', '>')
+
