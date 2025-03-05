@@ -1,18 +1,25 @@
 ---
 - name: OS Update
-  hosts: all
+  hosts: localhost
   become: true
+  gather_facts: true
   vars:
     os_update: "{{ OS_UPDATE | default(true) }}"
 
   tasks:
-    - name: Os Update
+    - name: Get the current hostname
+      command: hostname
+      register: current_host
+      changed_when: false
+
+    - name: OS Update on the current node
       ansible.builtin.apt:
         update_cache: yes
         upgrade: dist
       when: os_update | bool
+      delegate_to: "{{ current_host.stdout }}"
 
-    - name: Skip
+    - name: Skip OS update
       ansible.builtin.debug:
         msg: "Skipped OS update"
       when: not os_update | bool

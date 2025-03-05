@@ -1,13 +1,20 @@
 ---
 - name: User generation
-  hosts: all
+  hosts: localhost
   become: true
+  gather_facts: true
   vars:
     new_user: "{{ NEW_USER | default('pipelineuser') }}"
 
   tasks:
-    - name: Generate user
+    - name: Get the current hostname
+      command: hostname
+      register: current_host
+      changed_when: false
+
+    - name: Generate user on the current node
       ansible.builtin.user:
         name: "{{ new_user }}"
         shell: /bin/bash
         create_home: yes
+      delegate_to: "{{ current_host.stdout }}"
