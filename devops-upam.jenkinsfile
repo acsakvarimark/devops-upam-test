@@ -1,13 +1,92 @@
 pipeline {
-    agent { label 'k8-master' }
-    
-    stages {
-        stage('Hello World') {
-            steps {
-                script {
-                    echo 'Hello, World!'
-                }
-            }
-        }
+    agent { 
+        label params.TARGET_NODE 
+    } 
+	
+	parameters {
+		choice(name: 'target_node', choices: ['k8-master', 'k8-worker'], description: 'Jenkins node the pipeline runs on')
+        string(name: 'new_username', defaultValue: 'pipelineuser', description: 'Username to create inside node')
+        booleanParam(name: 'os_update', defaultValue: true, description: 'Check to enable OS update on node')
     }
+    
+    environment {
+        WORKSPACE_DIR = '/home/jenkins/workspace/upam-test-pipeline/'
+    }
+	
+
+	stages {
+		stage('Fetch Repository') {
+			steps {
+				script {
+					sh """
+					if [ -d "devops-upam-test/.git" ]; then
+						cd devops-upam-test && git pull
+						git reset --hard
+						git clean -fd
+						git pull
+					else
+						rm -rf devops-upam-test
+						git clone https://github.com/acsakvarimark/devops-upam-test.git
+					fi
+					"""
+					sh """
+					cd ${env.WORKSPACE_DIR}
+					"""
+				}
+			}
+		}
+		
+		stage('Setup tools') {
+			steps {
+				script {
+					sh """
+					sudo -u acsakvari -S bash docker_setup.sh
+					"""
+				}
+			}
+		}
+		
+		stage('Run User Creation Playbook') {
+			steps {
+				script {
+					def userName = params.new_username
+                    sh "ansible-playbook -i inventory.ini user_creation.yml -e NEW_USER=${userName}"
+				}
+			}
+		}
+		
+		stage('Run OS Update Playbook') {
+			steps {
+				script {
+					def osUpdateFlag = params.os_update ? "true" : "false"
+					sh "ansible-playbook -i inventory.ini os_update.yml -e OS_UPDATE=${osUpdateFlag}"
+				}
+			}
+		}
+		
+		stage('Setup K8s cluster') {
+			steps {
+				script {
+					sh "ansible-playbook -i inventory.ini k8_setup.yml"
+				}
+			}
+		}
+
+		stage('Deploy Portainer instance') {
+			steps {
+				script {
+					sh "ansible-playbook -i inventory.ini portainer_setup.yml"
+				}
+			}
+		}
+
+		stage('Deploy Ingress service') {
+			steps {
+				script {
+					sh "ansible-playbook -i inventory.ini ingress_setup.yml"
+				}
+			}
+		}
+		
+	}
 }

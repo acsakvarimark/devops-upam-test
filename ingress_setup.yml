@@ -1,0 +1,23 @@
+---
+- name: Deploy Ingress Controller on Kubernetes
+  hosts: localhost
+  become: true
+  tasks:
+
+    - name: Install Ingress
+      shell: |
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+      register: ingress_install
+      when: inventory_hostname == 'k8-master'
+
+    - name: Verify Ingress pods
+      shell: |
+        kubectl get pods -n ingress-nginx
+      register: ingress_pods
+      when: inventory_hostname == 'k8-master'
+
+    - name: Check Ingress status
+      shell: |
+        kubectl get svc -n ingress-nginx
+      register: ingress_service
+      when: inventory_hostname == 'k8-master'

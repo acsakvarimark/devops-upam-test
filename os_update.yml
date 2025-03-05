@@ -1,0 +1,33 @@
+---
+- name: OS Update
+  hosts: localhost
+  become: true
+  gather_facts: true
+  vars:
+    os_update: "{{ OS_UPDATE | default(true) }}"
+
+  tasks:
+    - name: Get the current hostname
+      command: hostname
+      register: current_host
+      changed_when: false
+
+    - name: OS Update on the current node
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+      when: os_update | bool
+      retries: 5 
+      delay: 10  
+      register: apt_update_result
+      until: apt_update_result is success
+
+    - name: Handle OS Update failure after retries
+      ansible.builtin.fail:
+        msg: "OS update failed after retries"
+      when: apt_update_result is failed
+
+    - name: Skip OS update
+      ansible.builtin.debug:
+        msg: "Skipped OS update"
+      when: not os_update | bool
