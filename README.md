@@ -5,7 +5,7 @@ The following contains the documentation and the steps taken in order to complet
 
 ## File ecosystem
 
-
+The repository contains the jenkinsfile that is responsible for the pipeline, as well as the ansible playbooks that provision and configure the different tasks. These are configured to run in a declarative pipeline at different stages.
 
 ## Virtual Machine Setup
 
@@ -125,9 +125,17 @@ Uses dedicated ansible file to generate new user for use in further tasks.
 
 Optional OS update on the node the pipeline runs on.
 
-5. Setup K8s
-6. Setup portainer
-7. Setup ingress
+**5. Setup K8s**
+
+Sets up K8 cluster with ansible.
+
+**6. Setup portainer**
+
+Sets up portainer instance with ansible.
+
+**7. Setup ingress**
+
+Sets up ingress instance with ansible.
 
 
 ## GitLab Setup
@@ -160,8 +168,8 @@ Optional OS update on the node the pipeline runs on.
 - **Simplify Linux VM configuration**: Making the provisioning and configuring of the Linux OS based VMs would be a top priority, as creating and maintaining these environmnet is top priority
 - **Configuration with ansible**: Provisioning and configuration step automation using ansible for more steps
 - **Add error-handling and retry hooks**: Add proper error-handling and rerty hooks to each element inside the pipeline
+- **Join two VMs to create K8 cluster**: Due to SSH issues I was not able to connect both VMs to the K8 cluster
 
-<div style="text-align: center">⁂</div>
-
-[^1]: https://ubuntu.com/download/serve
+### General improvements & final thoughts
+Unfortunately, I could not complete all tasks to a 100% as it was instructed by the tasklist (See problems above). Most problems arose from conflicts within the Linux OS and user priviledge problems, which can be mitigated with enough practice and knowledge of the Linux ecosystem as well as the knwoledge and experience of each tool used within the test case.
 

@@ -1,48 +1,86 @@
----
-- name: Setup and Upgrade K8s
+- name: Setup Kubernetes node
   hosts: localhost
-  become: true
+  become: yes
   tasks:
 
-    - name: Add Kubernetes GPG key
-      apt_key:
-        url: https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key
-        state: present
-
-    - name: Add K8s apt repository
-      apt_repository:
-        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /"
-        state: present
-        filename: "kubernetes"
-
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
-
-    - name: Install kubelet, kubeadm, kubectl
-      apt:
-        name:
-          - kubelet
-          - kubeadm
-          - kubectl
-        state: latest
-
-    - name: Initialize K8s
-      shell: |
-        kubeadm init --pod-network-cidr=10.244.0.0/16
-      register: init_output
+    - name: Reset Kubernetes if already installed
+      command: kubeadm reset -f
       ignore_errors: yes
 
+    - name: Remove old Kubernetes data
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /etc/kubernetes
+        - /var/lib/etcd
+        - /var/lib/kubelet
+        - /var/lib/cni
 
-    - name: Upgrade K8s packages
+    - name: Restart container runtime
+      service:
+        name: containerd
+        state: restarted
+
+    - name: Install required dependencies
       apt:
-        name:
-          - kubeadm
-          - kubelet
-          - kubectl
-        state: latest
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg
+        - software-properties-common
 
-    - name: Perform K8s upgrade using kubeadm
-      shell: |
-        kubeadm upgrade apply --yes
+    - name: Add Kubernetes apt key
+      shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+
+    - name: Add Kubernetes repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /"
+        state: present
+        filename: kubernetes
+
+    - name: Install Kubernetes components
+      apt:
+        name: 
+          - kubeadm
+          - kubectl
+          - kubelet
+        state: present
+
+    - name: Configure containerd to use systemd cgroup
+      copy:
+        dest: /etc/containerd/config.toml
+        content: |
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            SystemdCgroup = true
+      notify: Restart containerd
+
+    - name: Enable and start kubelet
+      service:
+        name: kubelet
+        enabled: yes
+        state: started
+
+    - name: Initialize Kubernetes cluster
+      command: kubeadm init --pod-network-cidr=10.244.0.0/16
+      args:
+        creates: /etc/kubernetes/admin.conf
+
+    - name: Create .kube directory for root user
+      file:
+        path: /root/.kube
+        state: directory
+        mode: '0755'
+
+    - name: Copy kubeconfig to root user
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /root/.kube/config
+        remote_src: yes
+
