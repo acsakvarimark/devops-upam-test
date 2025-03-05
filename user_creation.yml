@@ -17,4 +17,3 @@
         name: "{{ new_user }}"
         shell: /bin/bash
         create_home: yes
-      delegate_to: "{{ current_host.stdout }}"

@@ -17,7 +17,6 @@
         update_cache: yes
         upgrade: dist
       when: os_update | bool
-      delegate_to: "{{ current_host.stdout }}"
 
     - name: Skip OS update
       ansible.builtin.debug:

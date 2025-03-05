@@ -2,6 +2,11 @@
 
 The following contains the documentation and the steps taken in order to complete the UPAM DevOps test case.
 
+
+## File ecosystem
+
+
+
 ## Virtual Machine Setup
 
 ### VirtualBox Configuration
@@ -52,7 +57,7 @@ The following contains the documentation and the steps taken in order to complet
 
 **Ports**:
 
-- 2222, 222, 22: OPENSSH access to each VM
+- 2002, 222, 22: OPENSSH access to each VM
 - 8081: GitLab HTTP instance
 - 8080: Jenkins HTTP instance
 
@@ -83,6 +88,7 @@ The following contains the documentation and the steps taken in order to complet
 - Set up credentials in Jenkins for SSH connection
 - Manually created known_hosts file under /var/lib/jenkins/.ssh/known_hosts
 - Scanned and copied generated SSH keys with main VM's IP address to known_hosts file
+- Added further internal SSH configuration and port openings on 22 for the ansible instance communication
 
 ### Workspace Configuration
 
@@ -138,10 +144,6 @@ Optional OS update on the node the pipeline runs on.
 
 - Created docker-compose.yml file under ~/gitlab
 - Generates basic GitLab instance at http://localhost:8081
-
-### Ansible 
-
-
 
 
 ## Notes and Challenges
