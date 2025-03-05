@@ -103,10 +103,22 @@ The following contains the documentation and the steps taken in order to complet
 
 #### Stages
 
-1. Git repository pull 
-2. Setup of used tools 
-3. Generation of new User
-4. OS update (Optional)
+**1. Git repository pull**
+
+Checks whether the newest repository version is inside the workspace. Pulls newest version and navigates into it for further tasks.
+
+**2. Setup of used tools**
+
+Installs neccessary tools for further tasks such as docker and ansible.
+
+**3. Generation of new User**
+
+Uses dedicated ansible file to generate new user for use in further tasks.
+
+**4. OS update (Optional)**
+
+Optional OS update on the node the pipeline runs on.
+
 5. Setup K8s
 6. Setup portainer
 7. Setup ingress
@@ -126,6 +138,10 @@ The following contains the documentation and the steps taken in order to complet
 
 - Created docker-compose.yml file under ~/gitlab
 - Generates basic GitLab instance at http://localhost:8081
+
+### Ansible 
+
+
 
 
 ## Notes and Challenges
