@@ -43,10 +43,14 @@
         mode: '0644'
       when: init_output is defined
 
+    - name: Get join command
+      shell: kubeadm token create --print-join-command
+      register: join_command
+      when: init_output is defined and init_output.rc == 0
+
     - name: Join worker node to the Kubernetes cluster
-      shell: |
-        kubeadm join {{ hostvars['localhost']['ansible_host'] }}:6443 --token {{ hostvars['localhost']['k8_token'] }} --discovery-token-ca-cert-hash {{ hostvars['localhost']['ca_cert_hash'] }}
-      when: inventory_hostname == 'localhost'
+      shell: "{{ join_command.stdout }}"
+      when: join_command is defined
 
     - name: Upgrade K8s packages
       apt:
