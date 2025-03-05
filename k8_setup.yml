@@ -34,23 +34,6 @@
       register: init_output
       ignore_errors: yes
 
-    - name: Copy kubeconfig
-      copy:
-        content: "{{ init_output.stdout_lines | join('\n') }}"
-        dest: "/home/acsakvari/.kube/config"
-        owner: acsakvari
-        group: acsakvari
-        mode: '0644'
-      when: init_output is defined
-
-    - name: Get join command
-      shell: kubeadm token create --print-join-command
-      register: join_command
-      when: init_output is defined and init_output.rc == 0
-
-    - name: Join worker node to the Kubernetes cluster
-      shell: "{{ join_command.stdout }}"
-      when: join_command is defined
 
     - name: Upgrade K8s packages
       apt:
