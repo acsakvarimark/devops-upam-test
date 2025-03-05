@@ -50,7 +50,6 @@ pipeline {
 			steps {
 				script {
 					def userName = params.new_username
-					def currentNode = sh(script: "hostname", returnStdout: true).trim()
                     sh "ansible-playbook -i inventory.ini user_creation.yml -e NEW_USER=${userName}"
 				}
 			}
@@ -60,7 +59,6 @@ pipeline {
 			steps {
 				script {
 					def osUpdateFlag = params.os_update ? "true" : "false"
-					def currentNode = sh(script: "hostname", returnStdout: true).trim()
 					sh "ansible-playbook -i inventory.ini os_update.yml -e OS_UPDATE=${osUpdateFlag}"
 				}
 			}
