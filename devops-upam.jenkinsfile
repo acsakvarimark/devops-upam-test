@@ -49,8 +49,9 @@ pipeline {
 		stage('Run User Creation Playbook') {
 			steps {
 				script {
+					def userName = params.new_username
 					def currentNode = sh(script: "hostname", returnStdout: true).trim()
-                    sh "ansible-playbook -i inventory.ini user_creation.yml -e NEW_USER=devuser"
+                    sh "ansible-playbook -i inventory.ini user_creation.yml -e NEW_USER=${userName}"
 				}
 			}
 		}
@@ -58,7 +59,7 @@ pipeline {
 		stage('Run OS Update Playbook') {
 			steps {
 				script {
-					def osUpdateFlag = params.OS_UPDATE ? "true" : "false"
+					def osUpdateFlag = params.os_update ? "true" : "false"
 					def currentNode = sh(script: "hostname", returnStdout: true).trim()
 					sh "ansible-playbook -i inventory.ini os_update.yml -e OS_UPDATE=${osUpdateFlag}"
 				}
@@ -68,9 +69,7 @@ pipeline {
 		stage('Setup K8s cluster') {
 			steps {
 				script {
-					sh """
-					ansible-playbook -i inventory.ini k8s_setup_update_upgrade.yml -e kubernetes_version=${params.KUBERNETES_VERSION}
-					"""
+					sh "ansible-playbook -i inventory.ini k8_setup.yml"
 				}
 			}
 		}
@@ -78,9 +77,7 @@ pipeline {
 		stage('Deploy Portainer instance') {
 			steps {
 				script {
-					sh """
-					ansible-playbook -i inventory.ini portainer_deploy_upgrade.yml
-					"""
+					sh "ansible-playbook -i inventory.ini portainer_setup.yml"
 				}
 			}
 		}
@@ -88,9 +85,7 @@ pipeline {
 		stage('Deploy Ingress service') {
 			steps {
 				script {
-					sh """
-					ansible-playbook -i inventory.ini ingress_deploy.yml
-					"""
+					sh "ansible-playbook -i inventory.ini ingress_setup.yml"
 				}
 			}
 		}

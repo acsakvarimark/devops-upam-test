@@ -48,5 +48,5 @@
 
     - name: Perform K8s upgrade using kubeadm
       shell: |
-        kubeadm upgrade apply v{{ kubernetes_version }}
-      when: kubernetes_version is defined
+        kubeadm upgrade apply --yes
+      when: ansible_facts['distribution_version'] | version_compare('1.20', '>')
