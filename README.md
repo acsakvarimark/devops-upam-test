@@ -157,6 +157,8 @@ Optional OS update on the node the pipeline runs on.
 - **Gitlab automation**: Automate and timestamp running of pipeline into Gitlab repository. Due to me using the free version, no SSH token can be generated, hence the connection between jenkins, the VMs and Gitlab could not be made in the long run.
 - **Simplify Linux VM configuration**: Making the provisioning and configuring of the Linux OS based VMs would be a top priority, as creating and maintaining these environmnet is top priority.
 
+- **Configuration with ansible**: Provisioning and configuration step automation using ansible for more steps
+
 <div style="text-align: center">⁂</div>
 
 [^1]: https://ubuntu.com/download/serve
