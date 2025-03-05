@@ -6,4 +6,4 @@ sudo systemctl enable --now docker
 
 echo "Pulling ansible"
 sudo docker pull ansible/ansible:ubuntu1604
-sudo docker run --rm -t ansible/ansible:ubuntu1604
+sudo docker run --rm --privileged -t ansible/ansible:ubuntu1604 bash -c "ansible --version"
