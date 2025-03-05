@@ -11,7 +11,7 @@
 
     - name: Add K8s apt repository
       apt_repository:
-        repo: "deb http://apt.kubernetes.io/kubernetes-apt stable main"
+        repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
         state: present
         filename: "kubernetes"
 
@@ -61,4 +61,3 @@
       shell: |
         kubeadm upgrade apply --yes
       when: ansible_facts['distribution_version'] | version_compare('1.20', '>')
-
