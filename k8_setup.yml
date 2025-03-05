@@ -1,0 +1,52 @@
+---
+- name: Setup and Upgrade K8s
+  hosts: localhost
+  become: true
+  tasks:
+
+    - name: Add K8s apt repository
+      apt_repository:
+        repo: "deb http://apt.kubernetes.io/kubernetes-apt stable main"
+        state: present
+
+    - name: Install kubelet, kubeadm, kubectl
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: latest
+
+    - name: Initialize K8s
+      shell: |
+        kubeadm init --pod-network-cidr=10.244.0.0/16
+      when: not ansible_facts['distribution_version'] | version_compare('1.20', '<')
+      register: init_output
+      ignore_errors: yes
+
+    - name: Copy kubeconfig
+      copy:
+        content: "{{ init_output.stdout_lines | join('\n') }}"
+        dest: "/home/acsakvari/.kube/config"
+        owner: acsakvari
+        group: acsakvari
+        mode: '0644'
+      when: init_output is defined
+
+    - name: Join worker node to the Kubernetes cluster
+      shell: |
+        kubeadm join {{ hostvars['localhost']['ansible_host'] }}:6443 --token {{ hostvars['localhost']['k8_token'] }} --discovery-token-ca-cert-hash {{ hostvars['localhost']['ca_cert_hash'] }}
+      when: inventory_hostname == 'localhost'
+
+    - name: Upgrade K8s packages
+      apt:
+        name:
+          - kubeadm
+          - kubelet
+          - kubectl
+        state: latest
+
+    - name: Perform K8s upgrade using kubeadm
+      shell: |
+        kubeadm upgrade apply v{{ kubernetes_version }}
+      when: kubernetes_version is defined
