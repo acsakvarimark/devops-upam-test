@@ -17,6 +17,15 @@
         update_cache: yes
         upgrade: dist
       when: os_update | bool
+      retries: 5 
+      delay: 10  
+      register: apt_update_result
+      until: apt_update_result is success
+
+    - name: Handle OS Update failure after retries
+      ansible.builtin.fail:
+        msg: "OS update failed after retries"
+      when: apt_update_result is failed
 
     - name: Skip OS update
       ansible.builtin.debug:
