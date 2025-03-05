@@ -136,6 +136,11 @@ The following contains the documentation and the steps taken in order to complet
 - **GitLab Limitations**: Free version doesn't support SSH key connection to repository, opted for GitHub instead for easier SSH key generation and file checkout
 - **Linux OS**: Due to this being my first real Linux OS experience with only using the CLI, I faced challenges understanding commands and the way different user priviledges work
 
+## Improvement Points
+
+- **Gitlab automation**: Automate and timestamp running of pipeline into Gitlab repository. Due to me using the free version, no SSH token can be generated, hence the connection between jenkins, the VMs and Gitlab could not be made in the long run.
+- **Simplify Linux VM configuration**: Making the provisioning and configuring of the Linux OS based VMs would be a top priority, as creating and maintaining these environmnet is top priority.
+
 <div style="text-align: center">⁂</div>
 
 [^1]: https://ubuntu.com/download/serve

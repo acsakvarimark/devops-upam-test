@@ -28,6 +28,8 @@ pipeline {
 						rm -rf devops-upam-test
 						git clone https://github.com/acsakvarimark/devops-upam-test.git
 					fi
+					"""
+					sh """
 					cd ${env.WORKSPACE_DIR}
 					"""
 				}
