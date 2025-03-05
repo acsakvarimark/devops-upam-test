@@ -34,14 +34,20 @@
         - gnupg
         - software-properties-common
 
+    - name: Ensure /etc/apt/keyrings directory exists
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
     - name: Add Kubernetes apt key
-      shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg
+      shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
       args:
-        creates: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
     - name: Add Kubernetes repository
       apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /"
+        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /"
         state: present
         filename: kubernetes
 
@@ -84,3 +90,13 @@
         dest: /root/.kube/config
         remote_src: yes
 
+    - name: Apply Flannel CNI
+      command: kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
+      environment:
+        KUBECONFIG: /root/.kube/config
+
+  handlers:
+    - name: Restart containerd
+      service:
+        name: containerd
+        state: restarted
